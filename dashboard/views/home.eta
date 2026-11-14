@@ -58,7 +58,7 @@
 <script type="text/javascript">
   (function() {
     const btn = $('#homeLogin');
-    const hasCaptcha = <% it.gRecaptcha_siteKey ? "true" : "false" %>;
+    const hasCaptcha = <%= (it && it.gRecaptcha_siteKey) ? "true" : "false" %>;
     if (btn.length > 0) {
       btn.on("click", async function(e) {
         e.preventDefault();
