@@ -82,7 +82,8 @@
           window.location.href = data.redirectLink;
         },
         error: function(data) {
-          data.responseJSON.errors.forEach(function(error) {
+          const errors = data.responseJSON?.errors || [{ msg: "Lỗi không xác định" }];
+          errors.forEach(function(error) {
             btnLogin.innerHTML = 'Login';
             btnLogin.disabled = false;
             grecaptcha.reset();

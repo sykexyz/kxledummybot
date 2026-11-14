@@ -23,8 +23,8 @@ module.exports = function (Passport, db, bcrypt) {
 		if (!isMatch)
 			return done(null, false, { message: "Địa chỉ email hoặc mật khẩu không đúng" });
 
-		const remeber = req.body.remeber;
-		if (remeber)
+		const remember = req.body.remember;
+		if (remember)
 			req.session.cookie.maxAge = 30 * 24 * 60 * 60 * 1000; // 30 days
 		else
 			req.session.cookie.expires = false;
