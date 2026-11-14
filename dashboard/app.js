@@ -32,8 +32,17 @@ const audioExt = ["3gp", "aa", "aac", "aax", "act", "aiff", "alac", "amr",
 
 
 module.exports = async (api) => {
-	if (!api)
-		await require("./connectDB.js")();
+	if (!api) {
+		const { threadModel, userModel, dashBoardModel, globalModel, threadsData, usersData, dashBoardData, globalData } = await require("./connectDB.js")();
+		global.db.threadModel = threadModel;
+		global.db.userModel = userModel;
+		global.db.dashBoardModel = dashBoardModel;
+		global.db.globalModel = globalModel;
+		global.db.threadsData = threadsData;
+		global.db.usersData = usersData;
+		global.db.dashBoardData = dashBoardData;
+		global.db.globalData = globalData;
+	}
 
 	const { utils, utils: { drive } } = global;
 	const { config } = global.GoatBot;
@@ -57,7 +66,7 @@ module.exports = async (api) => {
 		accessToken = await OAuth2_client.getAccessToken();
 	}
 	catch (err) {
-		throw new Error(getText("Goat", "googleApiRefreshTokenExpired"));
+		utils.log.warn("GMAIL", `Gmail OAuth2 failed: ${err.message}. Email features disabled.`);
 	}
 
 	const transporter = nodemailer.createTransport({

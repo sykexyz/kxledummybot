@@ -7,7 +7,7 @@
 const { spawn } = require("child_process");
 const log = require("./logger/log.js");
 
-function startProject() {
+function startBot() {
 	const child = spawn("node", ["Goat.js"], {
 		cwd: __dirname,
 		stdio: "inherit",
@@ -15,11 +15,14 @@ function startProject() {
 	});
 
 	child.on("close", (code) => {
-		if (code == 2) {
-			log.info("Restarting Project...");
-			startProject();
-		}
+		log.info("RESTART", `Goat.js exited with code ${code}, restarting...`);
+		startBot();
+	});
+
+	child.on("error", (err) => {
+		log.err("RESTART", `Failed to spawn Goat.js: ${err.message}`);
+		setTimeout(startBot, 5000);
 	});
 }
 
-startProject();
+startBot();

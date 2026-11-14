@@ -216,7 +216,7 @@ if (config.autoRestart) {
 		accessToken = await OAuth2_client.getAccessToken();
 	}
 	catch (err) {
-		throw new Error(getText("Goat", "googleApiTokenExpired"));
+		utils.log.warn("GMAIL", `Gmail OAuth2 failed: ${err.message}. Email features disabled.`);
 	}
 	const transporter = nodemailer.createTransport({
 		host: 'smtp.gmail.com',
