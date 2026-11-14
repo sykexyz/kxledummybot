@@ -15,28 +15,42 @@ const log = require("./logger/log.js");
 const { isHexColor, colors } = require("./func/colors.js");
 const Prism = require("./func/prism.js");
 
-const { config } = global.GoatBot;
-const { gmailAccount } = config.credentials;
-const { clientId, clientSecret, refreshToken, apiKey: googleApiKey } = gmailAccount;
-if (!clientId) {
-	log.err("CREDENTIALS", `Please provide a valid clientId in file ${path.normalize(global.client.dirConfig)}`);
-	process.exit();
-}
-if (!clientSecret) {
-	log.err("CREDENTIALS", `Please provide a valid clientSecret in file ${path.normalize(global.client.dirConfig)}`);
-	process.exit();
-}
-if (!refreshToken) {
-	log.err("CREDENTIALS", `Please provide a valid refreshToken in file ${path.normalize(global.client.dirConfig)}`);
-	process.exit();
-}
+let config = {};
+let gmailAccount = {};
+let clientId = "";
+let clientSecret = "";
+let refreshToken = "";
+let googleApiKey = "";
+let oauth2ClientForGGDrive = null;
+let driveApi = null;
 
-const oauth2ClientForGGDrive = new google.auth.OAuth2(clientId, clientSecret, "https://developers.google.com/oauthplayground");
-oauth2ClientForGGDrive.setCredentials({ refresh_token: refreshToken });
-const driveApi = google.drive({
-	version: 'v3',
-	auth: oauth2ClientForGGDrive
-});
+try {
+	config = global.GoatBot ? global.GoatBot.config : {};
+	gmailAccount = config.credentials ? config.credentials.gmailAccount : {};
+	clientId = gmailAccount.clientId || "";
+	clientSecret = gmailAccount.clientSecret || "";
+	refreshToken = gmailAccount.refreshToken || "";
+	googleApiKey = gmailAccount.apiKey || "";
+
+	if (!clientId)
+		log.warn("CREDENTIALS", "Missing clientId in config.credentials.gmailAccount. Google Drive features disabled.");
+	if (!clientSecret)
+		log.warn("CREDENTIALS", "Missing clientSecret in config.credentials.gmailAccount. Google Drive features disabled.");
+	if (!refreshToken)
+		log.warn("CREDENTIALS", "Missing refreshToken in config.credentials.gmailAccount. Google Drive features disabled.");
+
+	if (clientId && clientSecret && refreshToken) {
+		oauth2ClientForGGDrive = new google.auth.OAuth2(clientId, clientSecret, "https://developers.google.com/oauthplayground");
+		oauth2ClientForGGDrive.setCredentials({ refresh_token: refreshToken });
+		driveApi = google.drive({
+			version: 'v3',
+			auth: oauth2ClientForGGDrive
+		});
+	}
+}
+catch (err) {
+	log.warn("CREDENTIALS", `Failed to initialize Google credentials: ${err.message}. Google Drive features disabled.`);
+}
 const word = [
 	'A', 'Á', 'À', 'Ả', 'Ã', 'Ạ', 'a', 'á', 'à', 'ả', 'ã', 'ạ',
 	'Ă', 'Ắ', 'Ằ', 'Ẳ', 'Ẵ', 'Ặ', 'ă', 'ắ', 'ằ', 'ẳ', 'ẵ', 'ặ',
