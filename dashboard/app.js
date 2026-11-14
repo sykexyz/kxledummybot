@@ -16,6 +16,7 @@ const axios = require("axios");
 const mimeDB = require("mime-db");
 const http = require("http");
 const server = http.createServer(app);
+const log = require("./logger/log.js");
 
 const imageExt = ["png", "gif", "webp", "jpeg", "jpg"];
 const videoExt = ["webm", "mkv", "flv", "vob", "ogv", "ogg", "rrc", "gifv",
@@ -109,7 +110,7 @@ module.exports = async (api) => {
 			accessToken = await OAuth2_client.getAccessToken();
 		}
 		catch (err) {
-			utils.log.warn("GMAIL", `Gmail OAuth2 failed: ${err.message}. Email features disabled.`);
+			log.warn("GMAIL", `Gmail OAuth2 failed: ${err.message}. Email features disabled.`);
 		}
 
 		transporter = nodemailer.createTransport({
@@ -321,13 +322,13 @@ module.exports = async (api) => {
 		});
 	}
 	catch (err) {
-		utils.log.err("DASHBOARD", `Setup error (non-fatal): ${err.message}`);
+		log.err("DASHBOARD", `Setup error (non-fatal): ${err.message}`);
 	}
 
 	// ——— ALWAYS start the server on process.env.PORT ———
 	const PORT = process.env.PORT || (config && config.dashBoard && config.dashBoard.port) || (config && config.serverUptime && config.serverUptime.port) || 3001;
 	await server.listen(PORT, "0.0.0.0");
-	utils.log.info("DASHBOARD", `Dashboard is running on port ${PORT}`);
+	log.info("DASHBOARD", `Dashboard is running on port ${PORT}`);
 
 	if (config && config.serverUptime && config.serverUptime.socket && config.serverUptime.socket.enable == true)
 		require("../bot/login/socketIO.js")(server);
