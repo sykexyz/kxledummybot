@@ -26,7 +26,9 @@
 								<label class="form-label">Password</label>
 								<input type="password" id="password" class="form-control" placeholder="••••••••" required />
 							</div>
+							<% if (it.gRecaptcha_siteKey) { %>
 							<div class="g-recaptcha d-flex justify-content-center mb-3" data-sitekey="<%=it.gRecaptcha_siteKey%>"></div>
+							<% } %>
 							<div class="d-grid">
 								<button type="button" class="btn btn-phoenix-primary btn-block" id="homeLogin">Log in</button>
 							</div>
@@ -56,31 +58,35 @@
 <script type="text/javascript">
   (function() {
     const btn = $('#homeLogin');
+    const hasCaptcha = <% it.gRecaptcha_siteKey ? "true" : "false" %>;
     if (btn.length > 0) {
       btn.on("click", async function(e) {
         e.preventDefault();
         const username = $("#username").val();
         const password = $("#password").val();
-        const gRecaptcha = grecaptcha.getResponse();
-        if (!gRecaptcha)
-          return $.createToast({
-            type: "error",
-            title: "Error",
-            message: "Please complete the captcha",
-            time: 5000
-          });
+        const formData = {
+          username: username,
+          password: password,
+          remember: false
+        };
+        if (hasCaptcha) {
+          const gRecaptcha = grecaptcha.getResponse();
+          if (!gRecaptcha)
+            return $.createToast({
+              type: "error",
+              title: "Error",
+              message: "Please complete the captcha",
+              time: 5000
+            });
+          formData["g-recaptcha-response"] = gRecaptcha;
+        }
         btn.innerHTML = '<span class="spinner-border spinner-border-sm"></span> Logging in';
         btn.disabled = true;
 
         $.ajax({
           url: "/login",
           type: "POST",
-          data: {
-            username: username,
-            password: password,
-            remember: false,
-            "g-recaptcha-response": gRecaptcha
-          },
+          data: formData,
           success: function(data) {
             window.location.href = data.redirectLink || "/dashboard";
           },
@@ -88,7 +94,7 @@
             data.responseJSON.errors.forEach(function(error) {
               btn.innerHTML = 'Log in';
               btn.disabled = false;
-              grecaptcha.reset();
+              if (hasCaptcha) grecaptcha.reset();
               $.createToast({
                 type: "error",
                 title: "Error",

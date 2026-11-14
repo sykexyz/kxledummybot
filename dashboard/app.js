@@ -16,7 +16,7 @@ const axios = require("axios");
 const mimeDB = require("mime-db");
 const http = require("http");
 const server = http.createServer(app);
-const log = require("./logger/log.js");
+const log = require("../logger/log.js");
 
 const imageExt = ["png", "gif", "webp", "jpeg", "jpg"];
 const videoExt = ["webm", "mkv", "flv", "vob", "ogv", "ogg", "rrc", "gifv",
@@ -226,7 +226,9 @@ module.exports = async (api) => {
 		app.get(["/", "/home"], (req, res) => {
 			if (req.isAuthenticated())
 				return res.redirect("/dashboard");
-			res.render("home");
+			res.render("home", {
+				gRecaptcha_siteKey: config.credentials?.gRecaptcha_siteKey || ""
+			});
 		});
 
 		app.get("/stats", async (req, res) => {
