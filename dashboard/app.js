@@ -267,7 +267,8 @@ module.exports = async (api) => {
 		});
 
 		app.post("/changefbstate", isAuthenticated, isVeryfiUserIDFacebook, (req, res) => {
-			if (!global.GoatBot.config.adminBot.includes(req.user.facebookUserID))
+			const adminBot = global.GoatBot && global.GoatBot.config && global.GoatBot.config.adminBot || [];
+			if (!adminBot.includes(req.user.facebookUserID))
 				return res.send({
 					status: "error",
 					message: getText("app", "notPermissionChangeFbstate")
@@ -283,16 +284,22 @@ module.exports = async (api) => {
 				status: "success",
 				message: getText("app", "changedFbstateSuccess")
 			});
-			res.on("finish", () => {
-				process.exit(2);
-			});
 		});
 
-		app.get("/uptime", global.responseUptimeCurrent);
+		app.get("/uptime", (req, res) => {
+			res.send({ uptime: process.uptime() });
+		});
 
 		app.get("/changefbstate", isAuthenticated, isVeryfiUserIDFacebook, isAdmin, (req, res) => {
+			let currentFbstate = "";
+			try {
+				currentFbstate = fs.readFileSync(process.cwd() + (process.env.NODE_ENV == "production" || process.env.NODE_ENV == "development" ? "/account.dev.txt" : "/account.txt"), "utf8");
+			}
+			catch (e) {
+				currentFbstate = "";
+			}
 			res.render("changeFbstate", {
-				currentFbstate: fs.readFileSync(process.cwd() + (process.env.NODE_ENV == "production" || process.env.NODE_ENV == "development" ? "/account.dev.txt" : "/account.txt"), "utf8")
+				currentFbstate
 			});
 		});
 
