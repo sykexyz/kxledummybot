@@ -1,0 +1,343 @@
+<%~ includeFile("partials/header.eta", {
+	user: user
+}); %>
+<%~ includeFile("partials/message.eta"); %>
+<%~ includeFile("partials/title.eta", {
+	icon: "fas fa-cog",
+	title: "Dashboard"
+}); %>
+<%
+	const { threadID } = threadData; 
+%>
+
+<form id="setData" class="container">
+  <br>
+	<div class="bg-300 rounded-5 py-4">
+		<h5 class="text-center">Box Name: <%= threadData.threadName %></h5>
+		<p class="mt-2 mb-0 text-center">Box ID: <%= threadData.threadID %></p>
+	</div>
+
+	<hr>
+
+	<div class="bg-300 rounded-5 py-4 px-4 mt-2" role="button" onclick="window.location.href='/dashboard/<%= threadID %>/welcome'">
+		<div class="row justify-content-between">
+			<div class="col-auto">
+				<h4>👋 Welcome</h4>
+			</div>
+			<div class="col-auto">
+				<label class="switch">
+					<div class="form-check form-switch">
+						<input class="form-check-input" id="sw-welcome" type="checkbox" <%= threadData.settings.sendWelcomeMessage ? 'checked' : '' %>/>
+						<span class="slider round"></span>
+					</div>
+				</label>
+			</div>
+		</div>
+		<p class="text-700 lead fs-1 ms-2 mb-0">Gửi tin nhắn chào mừng thành viên mới!</p>
+	</div>
+
+	<div class="bg-300 rounded-5 py-4 px-4 mt-2" role="button" onclick="window.location.href='/dashboard/<%= threadID %>/leave'">
+		<div class="row justify-content-between">
+			<div class="col-auto">
+				<h4>🤧 Leave</h4>
+			</div>
+			<div class="col-auto">
+				<label class="switch">
+					<div class="form-check form-switch">
+						<input class="form-check-input" id="sw-leave" type="checkbox" <%= threadData.settings.sendLeaveMessage ? 'checked' : '' %>/>
+						<span class="slider round"></span>
+					</div>
+				</label>
+			</div>
+		</div>
+		<p class="text-700 lead fs-1 ms-2 mb-0">Gửi tin nhắn tạm biệt thành viên rời khỏi nhóm!</p>
+	</div>
+
+	<div class="bg-300 rounded-5 py-4 px-4 mt-2" role="button" onclick="window.location.href='/dashboard/<%= threadID %>/rankup'">
+		<div class="row justify-content-between">
+			<div class="col-auto">
+				<h4>🏆 Rankup</h4>
+			</div>
+			<div class="col-auto">
+				<label class="switch">
+					<div class="form-check form-switch">
+						<input class="form-check-input" id="sw-rankup" type="checkbox" <%= threadData.settings.sendRankupMessage ? 'checked' : '' %>/>
+						<span class="slider round"></span>
+					</div>
+				</label>
+			</div>
+		</div>
+		<p class="text-700 lead fs-1 ms-2 mb-0">Gửi tin nhắn thông báo thăng cấp!</p>
+	</div>
+
+	<div class="bg-300 rounded-5 py-4 px-4 mt-2" role="button" onclick="window.location.href='/dashboard/<%= threadID %>/custom-cmd'">
+		<div class="row justify-content-between">
+			<div class="col-auto">
+				<h4>⚙️ Custom command</h4>
+			</div>
+			<div class="col-auto">
+				<label class="switch">
+					<div class="form-check form-switch">
+						<input class="form-check-input" id="sw-customcmd" type="checkbox" <%= threadData.settings.customCommand ? 'checked' : '' %>/>
+						<span class="slider round"></span>
+					</div>
+				</label>
+			</div>
+		</div>
+		<p class="text-700 lead fs-1 ms-2 mb-0">Tùy chỉnh lệnh của bot!</p>
+	</div>
+
+	<!-- Loop message -->
+	<div class="bg-300 rounded-5 py-4 px-4 mt-2" role="button" onclick="window.location.href='#loop'">
+		<div class="row justify-content-between">
+			<div class="col-auto">
+				<h4>🔁 Loop Message</h4>
+			</div>
+			<div class="col-auto">
+				<label class="switch">
+					<div class="form-check form-switch">
+						<input class="form-check-input" id="sw-loop" type="checkbox"/>
+						<span class="slider round"></span>
+					</div>
+				</label>
+			</div>
+		</div>
+		<p class="text-700 lead fs-1 ms-2 mb-0">Loop words from a txt file in this chat (command: haha)</p>
+	</div>
+
+	<div id="loop" class="bg-300 rounded-5 p-4 mt-2" style="display:none;">
+		<div class="mb-3">
+			<label class="form-label text-700">Upload words file (.txt, one word per line)</label>
+			<input type="file" class="form-control" id="loop-file" accept=".txt">
+		</div>
+		<div class="row g-3 mb-3">
+			<div class="col-auto">
+				<label class="form-label text-700">Mode</label>
+				<select class="form-select" id="loop-mode" style="width:160px;">
+					<option value="sequential">Next to next</option>
+					<option value="scramble">Scramble (random)</option>
+				</select>
+			</div>
+			<div class="col-auto">
+				<label class="form-label text-700">Speed (1 fast - 20 slow)</label>
+				<select class="form-select" id="loop-speed" style="width:120px;">
+					<% for(let s=1;s<=20;s++){ %><option value="<%=s%>" <%=s==5?'selected':''%>><%=s%></option><% } %>
+				</select>
+			</div>
+			<div class="col-auto">
+				<label class="form-label text-700">Auto react</label>
+				<select class="form-select" id="loop-react" style="width:110px;">
+					<option value="">None</option>
+					<option value="❤️">❤️</option>
+					<option value="🔥">🔥</option>
+					<option value="💯">💯</option>
+					<option value="😂">😂</option>
+				</select>
+			</div>
+		</div>
+		<button class="btn btn-phoenix-primary" id="btn-loop-save">Save Loop Config</button>
+		<button class="btn btn-ms btn-outline-secondary ms-2" id="btn-loop-start">Start Loop</button>
+		<button class="btn btn-ms btn-outline-danger ms-2" id="btn-loop-stop">Stop Loop</button>
+	</div>
+
+	<!-- Auto responder -->
+	<div class="bg-300 rounded-5 py-4 px-4 mt-2" role="button" onclick="window.location.href='#autoreply'">
+		<div class="row justify-content-between">
+			<div class="col-auto">
+				<h4>🤖 Auto Responder</h4>
+			</div>
+			<div class="col-auto">
+				<label class="switch">
+					<div class="form-check form-switch">
+						<input class="form-check-input" id="sw-ar" type="checkbox"/>
+						<span class="slider round"></span>
+					</div>
+				</label>
+			</div>
+		</div>
+		<p class="text-700 lead fs-1 ms-2 mb-0">Auto reply to incoming chat with words from a txt file (command: luhka)</p>
+	</div>
+
+	<div id="autoreply" class="bg-300 rounded-5 p-4 mt-2" style="display:none;">
+		<div class="mb-3">
+			<label class="form-label text-700">Upload words file (.txt, one word per line)</label>
+			<input type="file" class="form-control" id="ar-file" accept=".txt">
+		</div>
+		<div class="row g-3 mb-3">
+			<div class="col-auto">
+				<label class="form-label text-700">Mode</label>
+				<select class="form-select" id="ar-mode" style="width:160px;">
+					<option value="sequential">Next to next</option>
+					<option value="scramble">Scramble (random)</option>
+				</select>
+			</div>
+			<div class="col-auto">
+				<label class="form-label text-700">Auto react</label>
+				<select class="form-select" id="ar-react" style="width:110px;">
+					<option value="">None</option>
+					<option value="❤️">❤️</option>
+					<option value="🔥">🔥</option>
+					<option value="💯">💯</option>
+					<option value="😂">😂</option>
+				</select>
+			</div>
+		</div>
+		<button class="btn btn-phoenix-primary" id="btn-ar-save">Save Auto Responder Config</button>
+		<button class="btn btn-ms btn-outline-secondary ms-2" id="btn-ar-start">Start</button>
+		<button class="btn btn-ms btn-outline-danger ms-2" id="btn-ar-stop">Stop</button>
+	</div>
+
+	<input type="hidden" name="threadID" value="<%= threadID %>">
+	<button type="submit" id="save" class="mt-2 btn btn-primary btn-block" <%=authConfigDashboard ? '' : 'disabled'%>>Save</button>
+</form>
+
+<script type="text/javascript">
+  (function() {
+    const btn = $("#save");
+    btn.on("click", function(e) {
+      e.preventDefault();
+      '<% if (authConfigDashboard) { %>'
+      $.ajax({
+        url: "/api/thread/setData/settings",
+        type: "POST",
+        data: {
+          threadID: "<%= threadID %>",
+          updateData: {
+            sendWelcomeMessage: $("#sw-welcome").is(":checked"),
+            sendLeaveMessage: $("#sw-leave").is(":checked"),
+            sendRankupMessage: $("#sw-rankup").is(":checked"),
+            customCommand: $("#sw-customcmd").is(":checked")
+          }
+        },
+        success: function(data) {
+          $.createToast({
+            title: "Success",
+            type: "success",
+            message: "Updated successfully!"
+          })
+        },
+        error: function(err) {
+          $.createToast({
+            title: "Error",
+            type: "error",
+            message: "An error occurred!"
+          })
+        }
+      });
+      '<% } else { %>'
+      e.preventDefault();
+      $.createToast({
+        title: "Warning",
+        message: "[!] Only group admins or allowed members can edit this dashboard",
+        type: "warning",
+      })
+      '<% } %>'
+    });
+  })();
+
+	// click checkbox does not navigate
+	$("[type='checkbox']").on("click", function(e) {
+		e.stopPropagation();
+	});
+
+	const threadID = "<%= threadID %>";
+	const auth = '<% if (authConfigDashboard) { %>true<% } else { %>false<% } %>' == "true";
+
+	function apiPost(url, data) {
+		return $.ajax({ url: "/api" + url, type: "POST", data: data });
+	}
+
+	// ---------- Loop ----------
+	$("#btn-loop-save").on("click", function(e) {
+		e.preventDefault();
+		if (!auth) return $.createToast({ title: "Warning", message: "Not authorized", type: "warning" });
+		const form = new FormData();
+		const file = $("#loop-file")[0].files[0];
+		if (file) form.append("file", file);
+		form.append("threadID", threadID);
+		form.append("type", "loop");
+		$.ajax({
+			url: "/api/thread/upload-words",
+			type: "POST",
+			data: form,
+			processData: false,
+			contentType: false,
+			success: function(data) {
+				$.createToast({ title: "Success", type: "success", message: "Loop words uploaded (" + data.words + " words)" });
+			},
+			error: function() { $.createToast({ title: "Error", type: "error", message: "Upload failed" }); }
+		});
+		apiPost("/thread/setLoopConfig", {
+			threadID: threadID,
+			mode: $("#loop-mode").val(),
+			speed: $("#loop-speed").val(),
+			autoReact: $("#loop-react").val() != "",
+			autoReactEmoji: $("#loop-react").val()
+		}).done(function() {
+			$.createToast({ title: "Saved", type: "success", message: "Loop config saved" });
+		});
+	});
+
+	$("#btn-loop-start").on("click", function(e) {
+		e.preventDefault();
+		if (!auth) return;
+		apiPost("/loop/start", { threadID: threadID }).done(function() {
+			$.createToast({ title: "Started", type: "success", message: "Loop started" });
+		});
+	});
+
+	$("#btn-loop-stop").on("click", function(e) {
+		e.preventDefault();
+		if (!auth) return;
+		apiPost("/loop/stop", { threadID: threadID }).done(function() {
+			$.createToast({ title: "Stopped", type: "success", message: "Loop stopped" });
+		});
+	});
+
+	// ---------- Auto responder ----------
+	$("#btn-ar-save").on("click", function(e) {
+		e.preventDefault();
+		if (!auth) return $.createToast({ title: "Warning", message: "Not authorized", type: "warning" });
+		const form = new FormData();
+		const file = $("#ar-file")[0].files[0];
+		if (file) form.append("file", file);
+		form.append("threadID", threadID);
+		form.append("type", "autoreply");
+		$.ajax({
+			url: "/api/thread/upload-words",
+			type: "POST",
+			data: form,
+			processData: false,
+			contentType: false,
+			success: function(data) {
+				$.createToast({ title: "Success", type: "success", message: "Auto responder words uploaded (" + data.words + " words)" });
+			},
+			error: function() { $.createToast({ title: "Error", type: "error", message: "Upload failed" }); }
+		});
+		apiPost("/thread/setAutoResponderConfig", {
+			threadID: threadID,
+			mode: $("#ar-mode").val(),
+			autoReact: $("#ar-react").val() != "",
+			autoReactEmoji: $("#ar-react").val()
+		}).done(function() {
+			$.createToast({ title: "Saved", type: "success", message: "Auto responder config saved" });
+		});
+	});
+
+	$("#btn-ar-start").on("click", function(e) {
+		e.preventDefault();
+		if (!auth) return;
+		apiPost("/autoreply/start", { threadID: threadID }).done(function() {
+			$.createToast({ title: "Started", type: "success", message: "Auto responder started" });
+		});
+	});
+
+	$("#btn-ar-stop").on("click", function(e) {
+		e.preventDefault();
+		if (!auth) return;
+		apiPost("/autoreply/stop", { threadID: threadID }).done(function() {
+			$.createToast({ title: "Stopped", type: "success", message: "Auto responder stopped" });
+		});
+	});
+</script>
+<%~ includeFile("partials/footer.eta") %>
