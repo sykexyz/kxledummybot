@@ -191,6 +191,8 @@ module.exports = async (api) => {
 
 		async function isVerifyRecaptcha(responseCaptcha) {
 			const secret = gRecaptcha.secretKey;
+			if (!secret)
+				return true; // skip captcha when not configured (localhost/dev)
 			const verifyUrl = `https://www.google.com/recaptcha/api/siteverify?secret=${secret}&response=${responseCaptcha}`;
 			const verify = await axios.get(verifyUrl);
 			return verify.data.success;

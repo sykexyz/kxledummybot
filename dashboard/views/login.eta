@@ -20,8 +20,9 @@
         <input type="password" id="password" class="form-control" />
       </div>
 
-      <div class="g-recaptcha d-flex justify-content-center" data-sitekey="<%=it.gRecaptcha_siteKey%>">
-      </div>
+      <% if (it.gRecaptcha_siteKey) { %>
+      <div class="g-recaptcha d-flex justify-content-center" data-sitekey="<%=it.gRecaptcha_siteKey%>"></div>
+      <% } %>
 
       <div class="row mb-2 mt-2">
         <div class="col d-flex justify-content-center">
@@ -54,7 +55,8 @@
       const username = $("#username").val();
       const password = $("#password").val();
       const remember = $("#remember").is(":checked");
-      const gRecaptcha = grecaptcha.getResponse();
+      const gRecaptcha = <% if (it.gRecaptcha_siteKey) { %>grecaptcha.getResponse()<% } else { %>"<% } %>;
+      <% if (it.gRecaptcha_siteKey) { %>
       if (!gRecaptcha)
         return $.createToast({
           type: "error",
@@ -62,6 +64,7 @@
           message: "Vui lòng xác nhận captcha",
           time: 5000
         });
+      <% } %>
       const btnLogin = this;
       btnLogin.innerHTML = '<span class="spinner-border spinner-border-sm"></span> Login';
       btnLogin.disabled = true;
