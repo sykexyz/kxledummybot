@@ -208,6 +208,8 @@ module.exports = async (api) => {
 	const apiRouter = require("./routes/api.js")(paramsForRoutes);
 
 	app.get(["/", "/home"], (req, res) => {
+		if (req.isAuthenticated())
+			return res.redirect("/dashboard");
 		res.render("home");
 	});
 

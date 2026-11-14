@@ -7,98 +7,97 @@
 	title: "Home"
 }); %>
 
-<h1 class="text-center mt-3">Welcome to Goat Bot!</h1>
+<% if (!user) { %>
+<section class="py-5 bg-dark">
+	<div class="container">
+		<div class="row justify-content-center">
+			<div class="col-12 col-md-8 col-lg-6">
+				<div class="card card-phoenix-dark shadow">
+					<div class="card-body p-4">
+						<h2 class="text-center mb-4">Welcome to KXLE — BOT</h2>
+						<p class="text-center text-muted mb-4">Log in to access your personal dashboard</p>
 
-<ul class="text-center d-block list-unstyled">
-	<li> <i class="fas fa-user-shield"></i> Moderation</li>
-	<li> <i class="fas fa-terminal"></i> Custom commands</li>
-</ul>
+						<form id="loginForm">
+							<div class="mb-3">
+								<label class="form-label">Email address</label>
+								<input type="email" id="username" class="form-control" placeholder="you@example.com" required />
+							</div>
+							<div class="mb-3">
+								<label class="form-label">Password</label>
+								<input type="password" id="password" class="form-control" placeholder="••••••••" required />
+							</div>
+							<div class="g-recaptcha d-flex justify-content-center mb-3" data-sitekey="<%=it.gRecaptcha_siteKey%>"></div>
+							<div class="d-grid">
+								<button type="button" class="btn btn-phoenix-primary btn-block" id="homeLogin">Log in</button>
+							</div>
+						</form>
 
-<div class="text-center mb-3">
-<% if (global.botID) { %>
-	<button class="btn btn-phoenix-primary btn-block rounded-5" id="addme">
-		Thêm bot vào box chat của bạn
-	</button>
+						<p class="text-center mt-3 text-muted">
+							No account? <a href="/register">Register here</a>
+						</p>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</section>
 <% } else { %>
-	<button class="btn btn-phoenix-danger btn-block rounded-5">
-		Hiện tại bot đang offline
-	</button>
+<section class="py-5">
+	<div class="container text-center">
+		<h1>Welcome back, <%= user.name || user.email %>!</h1>
+		<p class="text-muted">You are logged in. Go to your dashboard to manage the bot.</p>
+		<a href="/dashboard" class="btn btn-phoenix-primary mt-3">Go to Dashboard</a>
+	</div>
+</section>
 <% } %>
-</div>
 
-<hr>
-
-<!-- go to /dashboard -->
-<section id="about" class="py-5" onclick="window.location.href='/dashboard'" style="cursor: pointer;">
-	<div class="container">
-		<div class="row">
-			<div class="col-lg-8 mx-auto">
-				<h2 class="text-center mb-4">Dễ dàng sử dụng</h2>
-				<p class="text-center">Tại đây bạn có thể tùy chỉnh lời chào thành viên mới, tạm biệt thành viên rời khỏi
-					box, v.v. và nhiều hơn nữa với bảng điều khiển dễ sử dụng và trực quan nhất!</p>
-			</div>
-		</div>
-	</div>
-</section>
-
-<section id="rent-api" class="bg-light py-5" onclick="window.location.href='/dashboard'" style="cursor: pointer;">
-	<div class="container">
-		<div class="row">
-			<div class="col-lg-8 mx-auto">
-				<h2 class="text-center mb-4">Gửi lời chào khi có người dùng mới tham gia vào nhóm chat</h2>
-				<p class="text-center">Tận dụng thông điệp chào mừng để thông báo cho những người mới đến về các quy tắc
-					nhóm chat, hoặc các sự kiện đang diễn ra của bạn. Bạn có thể thiết kế thiệp chào mừng của riêng
-					bạn hoặc giữ nó đơn giản.</p>
-			</div>
-		</div>
-	</div>
-</section>
-
-<section id="contact" class="py-5" onclick="window.location.href='/dashboard'" style="cursor: pointer;">
-	<div class="container">
-		<div class="row">
-			<div class="col-lg-8 mx-auto">
-				<h2 class="text-center mb-4">Dễ dàng tạo các lệnh tùy chỉnh của riêng bạn</h2>
-				<p class="text-center">Goat Bot cung cấp cho bạn toàn quyền kiểm soát để tạo ra lệnh của riêng bạn.</p>
-			</div>
-		</div>
-	</div>
-</section>
-
-<section id="thanks" class="bg-light py-5" onclick="window.location.href='/dashboard'" style="cursor: pointer;">
-	<div class="container">
-		<div class="row">
-			<div class="col-lg-8 mx-auto">
-				<h2 class="text-center mb-4">Cấp độ và exp trong box chat của bạn</h2>
-				<p class="text-center">Sử dụng hệ thống chúng tôi để xác định và thưởng cho các thành viên tích cực nhất
-					trong nhóm chat của bạn.</p>
-			</div>
-		</div>
-	</div>
-</section>
-
-<section id="contact" class="py-5" onclick="window.location.href='/dashboard'" style="cursor: pointer;">
-	<div class="container">
-		<div class="row">
-			<div class="col-lg-8 mx-auto">
-				<h2 class="text-center mb-4">Người dùng</h2>
-				<p class="text-center">Hiện tại bot đã được thêm vào tổng cộng <b><%=global.db.allThreadData.length%> nhóm
-					chat</b> và được sử dụng bởi <b><%=global.db.allUserData.length%> người dùng</b>.</p>
-			</div>
-		</div>
-	</div>
-</section>
-
+<%~ includeFile('partials/footer.eta') %>
 
 <script type="text/javascript">
   (function() {
-    const btn = $('#addme');
-		if (btn.length > 0) {
-			btn.on("click", () => {
-				window.open("https://www.facebook.com/" + "<%= global.botID %>", "_blank");
-			});
-		}
+    const btn = $('#homeLogin');
+    if (btn.length > 0) {
+      btn.on("click", async function(e) {
+        e.preventDefault();
+        const username = $("#username").val();
+        const password = $("#password").val();
+        const gRecaptcha = grecaptcha.getResponse();
+        if (!gRecaptcha)
+          return $.createToast({
+            type: "error",
+            title: "Error",
+            message: "Please complete the captcha",
+            time: 5000
+          });
+        btn.innerHTML = '<span class="spinner-border spinner-border-sm"></span> Logging in';
+        btn.disabled = true;
+
+        $.ajax({
+          url: "/login",
+          type: "POST",
+          data: {
+            username: username,
+            password: password,
+            remember: false,
+            "g-recaptcha-response": gRecaptcha
+          },
+          success: function(data) {
+            window.location.href = data.redirectLink || "/dashboard";
+          },
+          error: function(data) {
+            data.responseJSON.errors.forEach(function(error) {
+              btn.innerHTML = 'Log in';
+              btn.disabled = false;
+              grecaptcha.reset();
+              $.createToast({
+                type: "error",
+                title: "Error",
+                message: error.msg
+              });
+            });
+          }
+        });
+      });
+    }
   })();
 </script>
-
-<%~ includeFile('partials/footer.eta') %>
