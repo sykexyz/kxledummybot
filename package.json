@@ -4,7 +4,7 @@
 	"description": "A simple Bot chat messenger using personal account. Made by KXLE — BOT.",
 	"main": "index.js",
 	"engines": {
-		"node": "18.x",
+		"node": "20.x",
 		"npm": ">=7.0.0"
 	},
 	"dependencies": {
@@ -57,13 +57,13 @@
 	"license": "MIT",
 	"repository": {
 		"type": "git",
-		"url": "git+https://github.com/kxle-bot/Goat-Bot-V2.git"
+		"url": "git+https://github.com/sykexyz/kxledummybot.git"
 	},
 	"keywords": [],
 	"bugs": {
-		"url": "https://github.com/kxle-bot/Goat-Bot-V2/issues"
+		"url": "https://github.com/sykexyz/kxledummybot/issues"
 	},
-	"homepage": "https://github.com/kxle-bot/Goat-Bot-V2#readme",
+	"homepage": "https://github.com/sykexyz/kxledummybot#readme",
 	"optionalDependencies": {
 		"canvas": "^2.9.1"
 	},
