@@ -17,7 +17,13 @@ const fs = defaultRequire("fs-extra");
 const toptp = defaultRequire("totp-generator");
 const login = defaultRequire(`${process.cwd()}/fb-chat-api`);
 const qr = new (defaultRequire("qrcode-reader"));
-const Canvas = defaultRequire("canvas");
+let Canvas;
+try {
+	Canvas = defaultRequire("canvas");
+}
+catch (e) {
+	Canvas = null;
+}
 const https = defaultRequire("https");
 
 async function getName(userID) {
@@ -181,6 +187,8 @@ async function input(prompt, isPassword = false) {
 }
 
 qr.readQrCode = async function (filePath) {
+	if (!Canvas)
+		throw new Error("canvas module is not available (native build missing). QR code reading disabled.");
 	const image = await Canvas.loadImage(filePath);
 	const canvas = Canvas.createCanvas(image.width, image.height);
 	const ctx = canvas.getContext("2d");
